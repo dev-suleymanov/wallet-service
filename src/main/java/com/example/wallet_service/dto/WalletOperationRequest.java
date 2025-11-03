@@ -11,7 +11,7 @@ public record WalletOperationRequest (
         @NotNull UUID walletId,
         @NotNull OperationType operationType,
         @DecimalMin(value = "0.01")
-        @Digits(integer = 18, fraction = 2)
+        @Digits(integer = 17, fraction = 2)
         BigDecimal amount
 ) {
     public enum OperationType {

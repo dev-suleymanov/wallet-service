@@ -7,4 +7,5 @@
           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.23.xsd">
 
     <include file="ddl/create_wallet.xml" relativeToChangelogFile="true"/>
+    <include file="ddl/add_updated_at_to_wallet.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
