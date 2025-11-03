@@ -1,2 +1,36 @@
-# wallet-service
-REST API for wallet operations (DEPOSIT / WITHDRAW) using Spring Boot and PostgreSQL
+# 💰 Wallet Service
+
+REST API для управления балансом кошельков.  
+Поддерживает операции **DEPOSIT** и **WITHDRAW**, обеспечивает корректную обработку при высокой конкурентной нагрузке (до 1000 RPS по одному кошельку).
+
+---
+
+## 🚀 Стек технологий
+- **Java 17**
+- **Spring Boot 3.5.7**
+- **Spring Data JPA**
+- **PostgreSQL**
+- **Liquibase**
+- **Docker & Docker Compose**
+- **JUnit / MockMvc**
+
+---
+
+## ⚙️ Функциональность
+- `POST /api/v1/wallet` — пополнение или списание средств  
+- `GET /api/v1/wallets/{walletId}` — получение текущего баланса  
+- Защита от гонок и корректная работа при параллельных операциях  
+- Миграции базы данных с помощью **Liquibase**  
+- Валидация запросов и подробные ответы об ошибках  
+
+---
+
+## 📦 Формат запросов
+
+### ➕ Пример POST `/api/v1/wallet`
+```json
+{
+  "walletId": "550e8400-e29b-41d4-a716-446655440000",
+  "operationType": "DEPOSIT",
+  "amount": 1000
+}
