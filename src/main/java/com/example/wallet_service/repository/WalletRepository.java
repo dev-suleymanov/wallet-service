@@ -19,7 +19,7 @@ public class WalletRepository {
 
     public Optional<BigDecimal> updateBalance(UUID id, BigDecimal delta) {
         String sql = """
-                    UPDATE wallets
+                    UPDATE wallet
                        SET balance = balance + ?, updated_at = now()
                      WHERE id = ? AND balance + ? >= 0
                  RETURNING balance
