@@ -1,41 +1,73 @@
 package com.example.wallet_service.exception;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@Getter
 public class ApiException extends RuntimeException {
-    private final HttpStatus status;
-    private final ErrorCode code;
-    private final String message;
 
-    public ApiException(HttpStatus status, ErrorCode code, String message) {
+    private final HttpStatus status;
+    private final ErrorType type;
+    private final Enum<?> subtype;
+
+    public ApiException(HttpStatus status, ErrorType type, Enum<?> subtype, String message) {
         super(message);
         this.status = status;
-        this.code = code;
-        this.message = message;
+        this.type = type;
+        this.subtype = subtype;
     }
 
-    public static ApiException invalidRequest() {
+    public HttpStatus getStatus() { return status; }
+    public ErrorType getType() { return type; }
+    public Enum<?> getSubtype() { return subtype; }
+
+    public static ApiException validation(String message) {
         return new ApiException(
                 HttpStatus.BAD_REQUEST,
-                ErrorCode.INVALID_REQUEST,
-                "Invalid request data"
+                ErrorType.VALIDATION,
+                ErrorType.Validation.INVALID_FIELD,
+                message
+        );
+    }
+    public static ApiException invalidJson(String message) {
+        return new ApiException(
+                HttpStatus.BAD_REQUEST,
+                ErrorType.VALIDATION,
+                ErrorType.Validation.INVALID_JSON,
+                message
+        );
+    }
+    public static ApiException walletNotFound(String walletId) {
+        return new ApiException(
+                HttpStatus.NOT_FOUND,
+                ErrorType.BUSINESS,
+                ErrorType.Business.WALLET_NOT_FOUND,
+                "Wallet with id " + walletId + " not found"
         );
     }
 
-    public static ApiException internalError() {
+    public static ApiException insufficientFunds() {
+        return new ApiException(
+                HttpStatus.CONFLICT,
+                ErrorType.BUSINESS,
+                ErrorType.Business.INSUFFICIENT_FUNDS,
+                "Insufficient funds"
+        );
+    }
+
+    public static ApiException concurrency() {
+        return new ApiException(
+                HttpStatus.CONFLICT,
+                ErrorType.BUSINESS,
+                ErrorType.Business.CONCURRENCY_ERROR,
+                "Concurrent modification, please retry"
+        );
+    }
+
+    public static ApiException internal(String message) {
         return new ApiException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                ErrorCode.INTERNAL_ERROR,
-                "Internal server error"
+                ErrorType.SYSTEM,
+                ErrorType.System.INTERNAL_ERROR,
+                message
         );
     }
-}
-
-enum ErrorCode {
-    WALLET_NOT_FOUND,
-    INSUFFICIENT_FUNDS,
-    INVALID_REQUEST,
-    INTERNAL_ERROR
 }
