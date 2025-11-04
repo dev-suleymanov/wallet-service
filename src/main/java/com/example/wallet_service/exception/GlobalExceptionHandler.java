@@ -2,8 +2,6 @@ package com.example.wallet_service.exception;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -35,14 +33,6 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(ErrorType.VALIDATION, subtype, msg));
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
-        Optional<ConstraintViolation<?>> first = ex.getConstraintViolations().stream().findFirst();
-        String msg = first.map(ConstraintViolation::getMessage).orElse("Validation failed");
-        return ResponseEntity.badRequest()
-                .body(new ErrorResponse(ErrorType.VALIDATION, ErrorType.Validation.INVALID_FIELD, msg));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

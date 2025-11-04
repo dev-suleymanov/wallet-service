@@ -4,7 +4,6 @@ import com.example.wallet_service.dto.WalletBalanceResponse;
 import com.example.wallet_service.dto.WalletOperationRequest;
 import com.example.wallet_service.exception.ApiException;
 import com.example.wallet_service.service.WalletService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,10 +12,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/wallets")
-@RequiredArgsConstructor
 public class WalletController {
 
     private final WalletService walletService;
+
+    public WalletController(WalletService walletService) {
+        this.walletService = walletService;
+    }
 
     @PostMapping
     public ResponseEntity<WalletBalanceResponse> updateBalance(@RequestBody WalletOperationRequest request) {
