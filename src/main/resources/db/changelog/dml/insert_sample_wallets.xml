@@ -12,19 +12,16 @@
         <insert tableName="wallet">
             <column name="id" value="b6d6d54c-9f25-4dc6-8a9f-9d9b1b9f1f11"/>
             <column name="balance" valueNumeric="1000.00"/>
-            <column name="updated_at" valueDate="NOW()"/>
         </insert>
 
         <insert tableName="wallet">
             <column name="id" value="c7f4ad92-912f-4b57-bc83-bc47a9c5b7c3"/>
             <column name="balance" valueNumeric="2500.50"/>
-            <column name="updated_at" valueDate="NOW()"/>
         </insert>
 
         <insert tableName="wallet">
             <column name="id" value="f3e618b7-8c8b-4ad5-b9da-3ffb6ef72312"/>
             <column name="balance" valueNumeric="500.75"/>
-            <column name="updated_at" valueDate="NOW()"/>
         </insert>
     </changeSet>
 

@@ -20,7 +20,7 @@ public class PostgresWalletRepository implements WalletRepository {
     public Optional<BigDecimal> updateBalance(UUID id, BigDecimal delta) {
         String sql = """
                     UPDATE wallet
-                       SET balance = balance + ?, updated_at = now()
+                       SET balance = balance + ?
                      WHERE id = ? AND balance + ? >= 0
                  RETURNING balance
                 """;

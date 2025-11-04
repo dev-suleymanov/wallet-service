@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.UUID;
 
 @RestController
@@ -27,7 +26,7 @@ public class WalletController {
             case WITHDRAW -> request.amount().negate();
         };
         BigDecimal updatedBalance = walletService.updateBalance(request.walletId(), delta);
-        WalletBalanceResponse response = new WalletBalanceResponse(request.walletId(), updatedBalance, Instant.now());
+        WalletBalanceResponse response = new WalletBalanceResponse(request.walletId(), updatedBalance);
         return ResponseEntity.ok(response);
     }
 
@@ -35,7 +34,7 @@ public class WalletController {
     public ResponseEntity<WalletBalanceResponse> getBalance(@PathVariable UUID walletId) {
         validateWalletId(walletId);
         BigDecimal balance = walletService.getBalance(walletId);
-        return ResponseEntity.ok(new WalletBalanceResponse(walletId, balance, Instant.now()));
+        return ResponseEntity.ok(new WalletBalanceResponse(walletId, balance));
     }
 
     private void validateRequest(WalletOperationRequest request) {
