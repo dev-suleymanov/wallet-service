@@ -42,29 +42,22 @@ public class WalletController {
         if (request == null) {
             throw ApiException.validation("Request body must not be null");
         }
-
         validateWalletId(request.walletId());
-
         if (request.operationType() == null) {
             throw ApiException.validation("operationType must not be null");
         }
-
         if (request.amount() == null) {
             throw ApiException.validation("amount must not be null");
         }
-
         if (request.amount().compareTo(BigDecimal.ZERO) < 0) {
             throw ApiException.validation("amount must not be negative");
         }
-
         if (request.amount().compareTo(new BigDecimal("0.01")) < 0) {
             throw ApiException.validation("amount must be at least 0.01");
         }
-
         if (request.amount().scale() > 2) {
             throw ApiException.validation("amount must have at most 2 decimal places");
         }
-
         if (request.amount().precision() - request.amount().scale() > 17) {
             throw ApiException.validation("amount must have at most 17 integer digits");
         }

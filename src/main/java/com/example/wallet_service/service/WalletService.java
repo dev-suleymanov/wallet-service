@@ -1,6 +1,7 @@
 package com.example.wallet_service.service;
 
 import com.example.wallet_service.exception.ApiException;
+import com.example.wallet_service.repository.PostgresWalletRepository;
 import com.example.wallet_service.repository.WalletRepository;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.dao.OptimisticLockingFailureException;
