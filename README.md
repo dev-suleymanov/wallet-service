@@ -22,36 +22,47 @@ REST API для управления балансом кошельков.
 
 ### POST /api/v1/wallet
 Тело запроса:
+```json
 {
-    "walletId": "550e8400-e29b-41d4-a716-446655440000",
-    "operationType": "DEPOSIT",
-    "amount": 1000
+  "walletId": "550e8400-e29b-41d4-a716-446655440000",
+  "operationType": "DEPOSIT",
+  "amount": 1000
 }
+```
 
 Ответ:
+```json
 {
-    "walletId": "550e8400-e29b-41d4-a716-446655440000",
-    "balance": 2000
+  "walletId": "550e8400-e29b-41d4-a716-446655440000",
+  "balance": 2000
 }
+```
 
 ### GET /api/v1/wallets/{walletId}
 Пример запроса:
+```
 GET http://localhost:8080/api/v1/wallets/550e8400-e29b-41d4-a716-446655440000
+```
 
 Ответ:
+```json
 {
-    "walletId": "550e8400-e29b-41d4-a716-446655440000",
-    "balance": 2000
+  "walletId": "550e8400-e29b-41d4-a716-446655440000",
+  "balance": 2000
 }
+```
 
 ## 🌍 Переменные окружения
+```env
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=wallet_db
 DB_USER=wallet_user
 DB_PASSWORD=wallet_password
 APP_PORT=8080
+```
 
 ## 🐳 Запуск через Docker Compose
+```
 docker compose up -d
-
+```
