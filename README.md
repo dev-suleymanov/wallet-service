@@ -8,7 +8,6 @@ REST API для управления балансом кошельков.
 ## 🚀 Стек технологий
 - **Java 17**
 - **Spring Boot 3.5.7**
-- **Spring Data JPA**
 - **PostgreSQL**
 - **Liquibase**
 - **Docker & Docker Compose**
