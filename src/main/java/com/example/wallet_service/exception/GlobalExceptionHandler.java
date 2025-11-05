@@ -46,10 +46,18 @@ public class GlobalExceptionHandler {
             Class<?> targetType = ife.getTargetType();
             if (field != null && targetType != null) {
                 switch (field) {
-                    case "operationType" -> { msg = "operationType must be DEPOSIT or WITHDRAW"; subtype = ErrorType.Validation.INVALID_FIELD; }
-                    case "walletId"      -> { msg = "walletId must be a valid UUID";          subtype = ErrorType.Validation.INVALID_FIELD; }
-                    case "amount"        -> { msg = "amount must be a number";                subtype = ErrorType.Validation.INVALID_FIELD; }
-                    default              -> { msg = field + " has invalid format";            subtype = ErrorType.Validation.INVALID_FIELD; }
+                    case "operationType" -> {
+                        msg = "operationType must be DEPOSIT or WITHDRAW";
+                        subtype = ErrorType.Validation.INVALID_FIELD; }
+                    case "walletId"      -> {
+                        msg = "walletId must be a valid UUID";
+                        subtype = ErrorType.Validation.INVALID_FIELD; }
+                    case "amount"        -> {
+                        msg = "amount must be a number";
+                        subtype = ErrorType.Validation.INVALID_FIELD; }
+                    default              -> {
+                        msg = field + " has invalid format";
+                        subtype = ErrorType.Validation.INVALID_FIELD; }
                 }
             }
         }
@@ -60,7 +68,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnknown(Exception ex) {
         return ResponseEntity.internalServerError()
-                .body(new ErrorResponse(ErrorType.SYSTEM, ErrorType.System.INTERNAL_ERROR, "Unexpected server error"));
+                .body(new ErrorResponse(ErrorType.SYSTEM, ErrorType.System.INTERNAL_ERROR,
+                        "Unexpected server error"));
     }
 
     private Optional<String> firstFieldName(JsonMappingException jme) {
