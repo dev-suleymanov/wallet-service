@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:15
+    container_name: wallet-db
+    environment:
+      POSTGRES_DB: wallet_db
+      POSTGRES_USER: wallet_user
+      POSTGRES_PASSWORD: wallet_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - wallet_data:/var/lib/postgresql/data
+    restart: always
+
+  app:
+    build: .
+    container_name: wallet-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/wallet_db
+      SPRING_DATASOURCE_USERNAME: wallet_user
+      SPRING_DATASOURCE_PASSWORD: wallet_password
+      SPRING_LIQUIBASE_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+  wallet_data:
