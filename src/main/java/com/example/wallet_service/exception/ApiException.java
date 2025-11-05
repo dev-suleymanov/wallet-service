@@ -27,14 +27,7 @@ public class ApiException extends RuntimeException {
                 message
         );
     }
-    public static ApiException invalidJson(String message) {
-        return new ApiException(
-                HttpStatus.BAD_REQUEST,
-                ErrorType.VALIDATION,
-                ErrorType.Validation.INVALID_JSON,
-                message
-        );
-    }
+
     public static ApiException walletNotFound(String walletId) {
         return new ApiException(
                 HttpStatus.NOT_FOUND,
