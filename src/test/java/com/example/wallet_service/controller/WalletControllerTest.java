@@ -23,7 +23,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -39,7 +39,8 @@ class WalletControllerTest {
     @MockBean
     WalletService walletService;
 
-    private static final String BASE = "/api/v1/wallets";
+    private static final String POST_BASE = "/api/v1/wallet";
+    private static final String GET_BASE  = "/api/v1/wallets";
 
     private static String asJson(Map<String, Object> map) {
         StringBuilder sb = new StringBuilder("{");
@@ -71,7 +72,7 @@ class WalletControllerTest {
     }
 
     @Nested
-    @DisplayName("POST /api/v1/wallets — updateBalance")
+    @DisplayName("POST /api/v1/wallet — updateBalance")
     class UpdateBalance {
 
         @Test
@@ -79,24 +80,20 @@ class WalletControllerTest {
         void depositOk() throws Exception {
             UUID walletId = UUID.randomUUID();
             BigDecimal amount = new BigDecimal("100.00");
-
             ArgumentCaptor<BigDecimal> deltaCaptor = ArgumentCaptor.forClass(BigDecimal.class);
             when(walletService.updateBalance(eq(walletId), deltaCaptor.capture()))
                     .thenReturn(new BigDecimal("350.00"));
-
             var body = asJson(Map.of(
                     "walletId", walletId.toString(),
                     "operationType", "DEPOSIT",
                     "amount", amount
             ));
-
-            mockMvc.perform(post(BASE)
+            mockMvc.perform(post(POST_BASE)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.walletId").value(walletId.toString()))
                     .andExpect(jsonBigDecimal("$.balance", "350.00"));
-
             assertThat(deltaCaptor.getValue()).isEqualByComparingTo("100.00");
         }
 
@@ -105,31 +102,27 @@ class WalletControllerTest {
         void withdrawOk() throws Exception {
             UUID walletId = UUID.randomUUID();
             BigDecimal amount = new BigDecimal("25.50");
-
             ArgumentCaptor<BigDecimal> deltaCaptor = ArgumentCaptor.forClass(BigDecimal.class);
             when(walletService.updateBalance(eq(walletId), deltaCaptor.capture()))
                     .thenReturn(new BigDecimal("74.50"));
-
             var body = asJson(Map.of(
                     "walletId", walletId.toString(),
                     "operationType", "WITHDRAW",
                     "amount", amount
             ));
-
-            mockMvc.perform(post(BASE)
+            mockMvc.perform(post(POST_BASE)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.walletId").value(walletId.toString()))
                     .andExpect(jsonBigDecimal("$.balance", "74.50"));
-
             assertThat(deltaCaptor.getValue()).isEqualByComparingTo("-25.50");
         }
 
         @Test
         @DisplayName("null body → 400")
         void nullBody() throws Exception {
-            mockMvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON))
+            mockMvc.perform(post(POST_BASE).contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
         }
 
@@ -140,7 +133,7 @@ class WalletControllerTest {
             body.put("walletId", null);
             body.put("operationType", "DEPOSIT");
             body.put("amount", 10);
-            mockMvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content(asJson(body)))
+            mockMvc.perform(post(POST_BASE).contentType(MediaType.APPLICATION_JSON).content(asJson(body)))
                     .andExpect(status().isBadRequest());
         }
 
@@ -151,7 +144,7 @@ class WalletControllerTest {
             body.put("walletId", UUID.randomUUID().toString());
             body.put("operationType", null);
             body.put("amount", 10);
-            mockMvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content(asJson(body)))
+            mockMvc.perform(post(POST_BASE).contentType(MediaType.APPLICATION_JSON).content(asJson(body)))
                     .andExpect(status().isBadRequest());
         }
 
@@ -162,7 +155,7 @@ class WalletControllerTest {
             body.put("walletId", UUID.randomUUID().toString());
             body.put("operationType", "DEPOSIT");
             body.put("amount", null);
-            mockMvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content(asJson(body)))
+            mockMvc.perform(post(POST_BASE).contentType(MediaType.APPLICATION_JSON).content(asJson(body)))
                     .andExpect(status().isBadRequest());
         }
 
@@ -175,7 +168,7 @@ class WalletControllerTest {
                     "operationType", "DEPOSIT",
                     "amount", -1
             ));
-            mockMvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content(body))
+            mockMvc.perform(post(POST_BASE).contentType(MediaType.APPLICATION_JSON).content(body))
                     .andExpect(status().isBadRequest());
         }
 
@@ -188,7 +181,7 @@ class WalletControllerTest {
                     "operationType", "DEPOSIT",
                     "amount", amount
             ));
-            mockMvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content(body))
+            mockMvc.perform(post(POST_BASE).contentType(MediaType.APPLICATION_JSON).content(body))
                     .andExpect(status().isBadRequest());
         }
 
@@ -201,7 +194,7 @@ class WalletControllerTest {
                     "operationType", "DEPOSIT",
                     "amount", "10.123"
             ));
-            mockMvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content(body))
+            mockMvc.perform(post(POST_BASE).contentType(MediaType.APPLICATION_JSON).content(body))
                     .andExpect(status().isBadRequest());
         }
 
@@ -214,7 +207,7 @@ class WalletControllerTest {
                     "operationType", "DEPOSIT",
                     "amount", "100000000000000000.00"
             ));
-            mockMvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content(body))
+            mockMvc.perform(post(POST_BASE).contentType(MediaType.APPLICATION_JSON).content(body))
                     .andExpect(status().isBadRequest());
         }
     }
@@ -228,8 +221,7 @@ class WalletControllerTest {
         void getOk() throws Exception {
             UUID walletId = UUID.randomUUID();
             when(walletService.getBalance(walletId)).thenReturn(new BigDecimal("123.45"));
-
-            mockMvc.perform(get(BASE + "/" + walletId))
+            mockMvc.perform(get(GET_BASE + "/" + walletId))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.walletId").value(walletId.toString()))
@@ -239,7 +231,7 @@ class WalletControllerTest {
         @Test
         @DisplayName("невалидный UUID (тип-конверсия) → 400")
         void invalidUuidInPath() throws Exception {
-            mockMvc.perform(get(BASE + "/not-a-uuid"))
+            mockMvc.perform(get(GET_BASE + "/not-a-uuid"))
                     .andExpect(status().isBadRequest());
         }
     }

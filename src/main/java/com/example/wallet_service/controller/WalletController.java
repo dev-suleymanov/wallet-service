@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/wallets")
+@RequestMapping("/api/v1")
 public class WalletController {
 
     private final WalletService walletService;
@@ -20,7 +20,7 @@ public class WalletController {
         this.walletService = walletService;
     }
 
-    @PostMapping
+    @PostMapping("/wallet")
     public ResponseEntity<WalletBalanceResponse> updateBalance(@RequestBody WalletOperationRequest request) {
         validateRequest(request);
         BigDecimal delta = switch (request.operationType()) {
@@ -32,11 +32,11 @@ public class WalletController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{walletId}")
-    public ResponseEntity<WalletBalanceResponse> getBalance(@PathVariable UUID walletId) {
-        validateWalletId(walletId);
-        BigDecimal balance = walletService.getBalance(walletId);
-        return ResponseEntity.ok(new WalletBalanceResponse(walletId, balance));
+    @GetMapping("/wallets/{id}")
+    public ResponseEntity<WalletBalanceResponse> getBalance(@PathVariable UUID id) {
+        validateWalletId(id);
+        BigDecimal balance = walletService.getBalance(id);
+        return ResponseEntity.ok(new WalletBalanceResponse(id, balance));
     }
 
     private void validateRequest(WalletOperationRequest request) {
