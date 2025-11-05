@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -78,7 +77,6 @@ class WalletServiceTest {
 
         assertThat(result).isEqualByComparingTo("150.00");
         verify(walletRepository).exists(id);
-        // при депозите getBalance не нужен
         verify(walletRepository, never()).getBalance(any());
         verify(walletRepository).updateBalance(id, new BigDecimal("50.00"));
     }
@@ -102,20 +100,23 @@ class WalletServiceTest {
     }
 
     @Test
-    @DisplayName("updateBalance: repo вернул Optional.empty() -> INTERNAL_ERROR")
+    @DisplayName("updateBalance: Optional.empty() → INSUFFICIENT_FUNDS (409)")
     void updateBalance_updateReturnedEmpty() {
         UUID id = UUID.randomUUID();
         when(walletRepository.exists(id)).thenReturn(true);
-        when(walletRepository.updateBalance(id, new BigDecimal("10.00")))
+        when(walletRepository.getBalance(id)).thenReturn(Optional.of(new BigDecimal("100.00")));
+        when(walletRepository.updateBalance(id, new BigDecimal("-10.00")))
                 .thenReturn(Optional.empty());
-
         ApiException ex = assertThrows(ApiException.class,
-                () -> walletService.updateBalance(id, new BigDecimal("10.00")));
-
-        assertThat(ex.getStatus().value()).isEqualTo(500);
-        assertThat(ex.getType()).isEqualTo(ErrorType.SYSTEM);
-        assertThat(ex.getSubtype().name()).isEqualTo("INTERNAL_ERROR");
+                () -> walletService.updateBalance(id, new BigDecimal("-10.00")));
+        assertThat(ex.getStatus().value()).isEqualTo(409);
+        assertThat(ex.getSubtype().name()).isEqualTo("INSUFFICIENT_FUNDS");
+        InOrder inOrder = inOrder(walletRepository);
+        inOrder.verify(walletRepository).exists(id);
+        inOrder.verify(walletRepository).getBalance(id);
+        inOrder.verify(walletRepository).updateBalance(id, new BigDecimal("-10.00"));
     }
+
 
     @Test
     @DisplayName("updateBalance: OptimisticLockingFailure -> CONCURRENCY_ERROR (409)")
@@ -161,8 +162,6 @@ class WalletServiceTest {
         assertThat(ex.getSubtype().name()).isEqualTo("INTERNAL_ERROR");
         verify(walletRepository, never()).updateBalance(any(), any());
     }
-
-    // ---------- getBalance ----------
 
     @Test
     @DisplayName("getBalance: NOT FOUND если кошелька нет")
