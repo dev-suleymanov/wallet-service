@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "success", "type", "subtype", "message" })
 public class ErrorResponse {
-    private final boolean success = false;
+    private static final boolean success = false;
     private final String message;
     private final String type;
     private final String subtype;

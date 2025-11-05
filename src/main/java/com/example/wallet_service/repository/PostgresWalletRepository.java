@@ -21,12 +21,11 @@ public class PostgresWalletRepository implements WalletRepository {
     public Optional<BigDecimal> updateBalance(UUID id, BigDecimal delta) {
         final String sql = """
             UPDATE wallet
-               SET balance = balance + ?, updated_at = NOW()
+               SET balance = balance + ?
              WHERE id = ?
                AND (balance + ?) >= 0
             RETURNING balance
             """;
-
         List<BigDecimal> out = jdbcTemplate.query(con -> {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setBigDecimal(1, delta);
@@ -34,7 +33,6 @@ public class PostgresWalletRepository implements WalletRepository {
             ps.setBigDecimal(3, delta);
             return ps;
         }, (rs, rn) -> rs.getBigDecimal(1));
-
         return out.isEmpty() ? Optional.empty() : Optional.of(out.get(0));
     }
 
